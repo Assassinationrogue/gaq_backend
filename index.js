@@ -1,22 +1,25 @@
-const http = require('http');
-const express = require('express');
-const bodyParser = require('body-parser');
+const http = require("http");
+const express = require("express");
+const bodyParser = require("body-parser");
 const expressApp = express();
-const router = express.Router();
+const cors = require("cors");
 
-const initalRoute = router.get("/",(req,res,next)=>{
-    res.send("<h1>Hello Node</h1>")
-})
+const api = require("./src/app");
 
-const userRoute = router.get("/:id", (req, res, next) => {
-   
-  res.send(`<h1>Hello ${req.params.id}</h1>`);
+expressApp.use(
+  cors({
+    origin: "http://localhost:4200",
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ['GET','POST', 'OPTIONS']
+  })
+);
+
+expressApp.use(bodyParser.json());
+
+expressApp.use(bodyParser.urlencoded({ extended: false }));
+
+expressApp.use(api);
+
+http.createServer(expressApp).listen(4000, () => {
+  console.log("Listening to https://localhost:4000");
 });
-
-expressApp.use(initalRoute)
-
-
-
-http.createServer(expressApp).listen(4000,()=>{
-    console.log("Listening to https://localhost:4000")
-})
